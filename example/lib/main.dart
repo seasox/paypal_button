@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:paypal_button/paypal_button.dart';
+import 'package:paypal_button/paypal_order_params.dart';
+import 'package:paypal_button/paypal_service.dart';
 
 void main() {
   runApp(MyApp());
@@ -46,17 +49,19 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+  void onPayPalFinish(BuildContext context, String orderId) {
+    print(orderId);
+    Navigator.pop(context);
+  }
+
+  Future<String> createPayPalAccessToken(PayPalServiceMode mode) {
+    // depending on mode, create a PayPal AccessToken using your clientId and secretId
+    // You might want to do a HTTP request to your backend, which in turn
+    // creates an Access Token using the appropriate PayPal API. A simple example
+    // using HTTP Basic Auth:
+    // curl -v 'https://YOUR_CLIENT_ID:YOUR_CLIENT_SECRET@api.sandbox.paypal.com/v1/oauth2/token?grant_type=client_credentials
+    return Future.delayed(Duration(seconds: 2), () => "YOUR_PAYPAL_BEARER_ACCESS_TOKEN");
   }
 
   @override
@@ -67,6 +72,9 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
+    PayPalService service = PayPalService(
+        accessToken: createPayPalAccessToken,
+    );
     return Scaffold(
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
@@ -74,40 +82,33 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
+            Text('Click the Button to start a PayPal payment flow!'),
+            PayPalButton(
+                onFinish: onPayPalFinish,
+                orderParams: PayPalOrderParams.create(
+                    "1",
+                    "iPhone X Special Offer",
+                    "EUR",
+                    0,
+                    "For questions about yur purchase, contact us at mail@shop.example.org",
+                    [
+                     PayPalItem(
+                       name: "iPhone X",
+                       quantity: 1,
+                       price: 399.99,
+                       currency: "EUR",
+                     ),
+                    ],
+                    "https://example.org/purchase_done",
+                    "https://example.com/purchase_cancel"),
+                service: service),
+            Text('This Example will not run as-is, because you must provide your own HTTP Bearer Token from the createPayPalAccessToken callback.')
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
