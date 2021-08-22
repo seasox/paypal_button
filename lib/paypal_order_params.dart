@@ -1,5 +1,3 @@
-
-
 ///
 /// The classes in this file describe order parameters for a PayPal Transaction.
 /// You can create a simple transaction using the PayPalOrderParams.create method.
@@ -63,8 +61,7 @@ class PayPalPaymentOptions {
 
   final String allowedPaymentMethod;
 
-  Map<String, dynamic> toJson() =>
-      {
+  Map<String, dynamic> toJson() => {
         "allowed_payment_method": allowedPaymentMethod,
       };
 }
@@ -80,8 +77,7 @@ class PayPalTransactionAmountDetails {
   final String shipping;
   final String shippingDiscount;
 
-  Map<String, dynamic> toJson() =>
-      {
+  Map<String, dynamic> toJson() => {
         "subtotal": subtotal,
         "shipping": shipping,
         "shipping_discount": shippingDiscount,
@@ -99,8 +95,7 @@ class PayPalTransactionAmount {
   final String currency;
   final PayPalTransactionAmountDetails details;
 
-  Map<String, dynamic> toJson() =>
-      {
+  Map<String, dynamic> toJson() => {
         "total": total,
         "currency": currency,
         "details": details,
@@ -114,8 +109,7 @@ class PayPalPayer {
 
   final String paymentMethod; // usually "paypal"
 
-  Map<String, dynamic> toJson() =>
-      {
+  Map<String, dynamic> toJson() => {
         "payment_method": paymentMethod,
       };
 }
@@ -141,8 +135,7 @@ class PayPalShippingAddress {
   final String phone;
   final String state;
 
-  Map<String, dynamic> toJson() =>
-      {
+  Map<String, dynamic> toJson() => {
         "recipient_name": recipientName,
         "line1": line1,
         "line2": line2,
@@ -163,8 +156,7 @@ class PayPalItemList {
   final List<PayPalItem> items;
   final PayPalShippingAddress? shippingAddress;
 
-  Map<String, dynamic> toJson() =>
-      {
+  Map<String, dynamic> toJson() => {
         "items": items,
         if (shippingAddress != null) "shipping_address": shippingAddress,
       };
@@ -182,8 +174,7 @@ class PayPalTransaction {
   final PayPalPaymentOptions paymentOptions;
   final PayPalItemList itemList;
 
-  Map<String, dynamic> toJson() =>
-      {
+  Map<String, dynamic> toJson() => {
         "amount": amount,
         "description": description,
         "payment_options": paymentOptions,
@@ -200,8 +191,7 @@ class PayPalRedirectUrls {
   final String returnUrl;
   final String cancelUrl;
 
-  Map<String, dynamic> toJson() =>
-      {
+  Map<String, dynamic> toJson() => {
         "return_url": returnUrl,
         "cancel_url": cancelUrl,
       };
@@ -222,8 +212,7 @@ class PayPalOrderParams {
   final String noteToPayer;
   final PayPalRedirectUrls redirectUrls;
 
-  Map<String, dynamic> toJson() =>
-      {
+  Map<String, dynamic> toJson() => {
         "intent": intent,
         "payer": payer,
         "transactions": transactions,
@@ -232,16 +221,16 @@ class PayPalOrderParams {
       };
 
   static PayPalOrderParams create(
-      String amount,
-      String description,
-      String currency,
-      double shipping,
-      String noteToPayer,
-      List<PayPalItem> items,
-      String returnUrl,
-      String cancelUrl,
-      ) {
-    final itemsTotal = items.map((i) => i.price).reduce((a, b) => a+b);
+    String amount,
+    String description,
+    String currency,
+    double shipping,
+    String noteToPayer,
+    List<PayPalItem> items,
+    String returnUrl,
+    String cancelUrl,
+  ) {
+    final itemsTotal = items.map((i) => i.price).reduce((a, b) => a + b);
     return PayPalOrderParams(
       intent: "sale",
       payer: PayPalPayer(

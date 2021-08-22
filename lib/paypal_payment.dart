@@ -52,9 +52,7 @@ class PayPalPaymentState extends State<PayPalPayment> {
     return Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
-          backgroundColor: Theme
-              .of(context)
-              .backgroundColor,
+          backgroundColor: Theme.of(context).backgroundColor,
           leading: GestureDetector(
             child: Icon(Icons.arrow_back),
             onTap: () => Navigator.pop(context),
@@ -68,28 +66,28 @@ class PayPalPaymentState extends State<PayPalPayment> {
                   initialUrl: state.data!.approvalUrl,
                   javascriptMode: JavascriptMode.unrestricted,
                   navigationDelegate: (NavigationRequest request) {
-                    if (request.url.contains(
-                        widget.orderParams.redirectUrls.returnUrl)) {
+                    if (request.url
+                        .contains(widget.orderParams.redirectUrls.returnUrl)) {
                       final uri = Uri.parse(request.url);
                       final payerID = uri.queryParameters['PayerID'];
                       if (payerID != null) {
-                        state.data!
-                            .execute(payerID)
-                            .then((id) {
+                        state.data!.execute(payerID).then((id) {
                           widget.onFinish?.call(context, id);
                         });
                       } else {
-                        return widget.onError?.call(context, "payerID is null") ?? NavigationDecision.navigate;
+                        return widget.onError
+                                ?.call(context, "payerID is null") ??
+                            NavigationDecision.navigate;
                       }
-                    } else if (request.url.contains(widget.orderParams.redirectUrls.cancelUrl)) {
+                    } else if (request.url
+                        .contains(widget.orderParams.redirectUrls.cancelUrl)) {
                       if (widget.onCancel != null) {
                         return widget.onCancel!(context);
                       }
                       Navigator.pop(context);
                     }
                     return NavigationDecision.navigate;
-                  }
-              );
+                  });
             } else if (state.hasError) {
               widget.onError?.call(context, state.error!.toString());
               return Center(child: Text(state.error!.toString()));
@@ -97,7 +95,6 @@ class PayPalPaymentState extends State<PayPalPayment> {
               return Center(child: CircularProgressIndicator());
             }
           },
-        )
-    );
+        ));
   }
 }

@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -39,20 +38,20 @@ class PayPalButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ElevatedButton(
-    onPressed: () => Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (BuildContext context) => PayPalPayment(
+        onPressed: () => Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (BuildContext context) => PayPalPayment(
               onFinish: onFinish,
               onError: onError,
               onCancel: onCancel,
               orderParams: orderParams,
               service: service,
+            ),
           ),
         ),
-    ),
-    child: Text(
-      'Pay with PayPal',
-      textAlign: TextAlign.center,
-    ),
-  );
+        child: Text(
+          'Pay with PayPal',
+          textAlign: TextAlign.center,
+        ),
+      );
 }

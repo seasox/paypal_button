@@ -49,7 +49,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   void onPayPalFinish(BuildContext context, String orderId) {
     print(orderId);
     Navigator.pop(context);
@@ -61,7 +60,8 @@ class _MyHomePageState extends State<MyHomePage> {
     // creates an Access Token using the appropriate PayPal API. A simple example
     // using HTTP Basic Auth:
     // curl -v 'https://YOUR_CLIENT_ID:YOUR_CLIENT_SECRET@api.sandbox.paypal.com/v1/oauth2/token?grant_type=client_credentials
-    return Future.delayed(Duration(seconds: 2), () => "YOUR_PAYPAL_BEARER_ACCESS_TOKEN");
+    return Future.delayed(
+        Duration(seconds: 2), () => "YOUR_PAYPAL_BEARER_ACCESS_TOKEN");
   }
 
   @override
@@ -73,7 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     PayPalService service = PayPalService(
-        accessToken: createPayPalAccessToken,
+      accessToken: createPayPalAccessToken,
     );
     return Scaffold(
       appBar: AppBar(
@@ -95,17 +95,18 @@ class _MyHomePageState extends State<MyHomePage> {
                     0,
                     "For questions about yur purchase, contact us at mail@shop.example.org",
                     [
-                     PayPalItem(
-                       name: "iPhone X",
-                       quantity: 1,
-                       price: 399.99,
-                       currency: "EUR",
-                     ),
+                      PayPalItem(
+                        name: "iPhone X",
+                        quantity: 1,
+                        price: 399.99,
+                        currency: "EUR",
+                      ),
                     ],
                     "https://example.org/purchase_done",
                     "https://example.com/purchase_cancel"),
                 service: service),
-            Text('This Example will not run as-is, because you must provide your own HTTP Bearer Token from the createPayPalAccessToken callback.')
+            Text(
+                'This Example will not run as-is, because you must provide your own HTTP Bearer Token from the createPayPalAccessToken callback.')
           ],
         ),
       ),

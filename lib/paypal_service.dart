@@ -25,7 +25,6 @@ extension ModeExtension on PayPalServiceMode {
 }
 
 class PaymentRequest {
-
   final String _executeUrl;
   final String approvalUrl;
   String _accessToken;
@@ -38,7 +37,8 @@ class PaymentRequest {
     this._client,
   );
 
-  static PaymentRequest fromJson(Map<String, dynamic> body, String accessToken, Client client) {
+  static PaymentRequest fromJson(
+      Map<String, dynamic> body, String accessToken, Client client) {
     String? executeUrl;
     String? approvalUrl;
     if (body["links"] != null && body["links"].length > 0) {
@@ -49,8 +49,8 @@ class PaymentRequest {
       if (item != null) {
         approvalUrl = item["href"];
       }
-      final item1 = links.firstWhere((o) => o["rel"] == "execute",
-          orElse: () => null);
+      final item1 =
+          links.firstWhere((o) => o["rel"] == "execute", orElse: () => null);
       if (item1 != null) {
         executeUrl = item1["href"];
       }
@@ -61,19 +61,18 @@ class PaymentRequest {
     return PaymentRequest._(executeUrl, approvalUrl, accessToken, client);
   }
 
-  Future<String> execute(String payerID) =>
-      _client.post(Uri.parse(_executeUrl),
+  Future<String> execute(String payerID) => _client
+      .post(Uri.parse(_executeUrl),
           body: convert.jsonEncode({"payer_id": payerID}),
           headers: {
             "content-type": "application/json",
             'Authorization': 'Bearer ' + _accessToken
           })
-          .then((response) => convert.jsonDecode(response.body))
-          .then((body) => body['id']);
+      .then((response) => convert.jsonDecode(response.body))
+      .then((body) => body['id']);
 }
 
 class PayPalServiceException {
-
   final Map<String, dynamic> body;
 
   PayPalServiceException({
@@ -82,11 +81,9 @@ class PayPalServiceException {
 
   String toString() {
     if (body['message'] != null) {
-      return "${body['message']}: ${body['details']?.toString() ??
-          "no details"}";
+      return "${body['message']}: ${body['details']?.toString() ?? "no details"}";
     } else if (body['error'] != null) {
-      return "${body['error']}: ${body['error_description']?.toString() ??
-          "no error description"}";
+      return "${body['error']}: ${body['error_description']?.toString() ?? "no error description"}";
     } else {
       return "${body.toString()}";
     }
@@ -94,22 +91,16 @@ class PayPalServiceException {
 }
 
 class PayPalService {
-
   PayPalService({
-    /**
-     * A Function which returns a Future<String?> which generates an access token
-     */
+    /// A Function which returns a Future<String?> which generates an access token
     required this.accessToken,
-    /**
-     * The mode to use
-     */
+
+    /// The mode to use
     this.mode = PayPalServiceMode.live,
-    /**
-     * an optional HTTP client
-     */
+
+    /// an optional HTTP client
     Client? client,
   }) : this.client = client ?? Client();
-
 
   final PayPalAccessTokenProvider accessToken;
   final PayPalServiceMode mode;
@@ -117,9 +108,7 @@ class PayPalService {
 
   // create a payment request
   Future<PaymentRequest> createPayment(PayPalOrderParams orderParams) =>
-      accessToken
-          .call(mode)
-          .then((accessToken) => client.post(
+      accessToken.call(mode).then((accessToken) => client.post(
             Uri.parse("${mode.domain}/v1/payments/payment"),
             body: jsonEncode(orderParams),
             headers: {
@@ -136,6 +125,5 @@ class PayPalService {
             } else {
               throw PayPalServiceException(body: body);
             }
-          })
-      );
+          }));
 }
