@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http_auth/http_auth.dart';
 import 'package:paypal_button/paypal_button.dart';
 import 'package:paypal_button/paypal_order_params.dart';
 import 'package:paypal_button/paypal_service.dart';
@@ -52,6 +55,23 @@ class _MyHomePageState extends State<MyHomePage> {
   void onPayPalFinish(BuildContext context, String orderId) {
     print(orderId);
     Navigator.pop(context);
+  }
+
+  // for getting the access token from Paypal
+  Future<String> createPayPalAccessTokenLocal(PayPalServiceMode mode) async {
+    // create access token locally.
+    // !!! DO NOT SHIP YOUR PAYPAL API SECRET WITH YOUR APP !!!
+    String clientId = 'YOUR_CLIENT_ID';
+    String secret = 'YOUR_CLIENT_SECRET';
+    var client = BasicAuthClient(clientId, secret);
+    var response = await client.post(Uri.parse(
+        '${mode.domain}/v1/oauth2/token?grant_type=client_credentials'));
+    if (response.statusCode == 200) {
+      final body = jsonDecode(response.body);
+      return body["access_token"];
+    } else {
+      throw Exception("HTTP error ${response.statusCode}: ${response.body}");
+    }
   }
 
   Future<String> createPayPalAccessToken(PayPalServiceMode mode) {
