@@ -4,8 +4,6 @@ import 'dart:convert';
 
 import 'package:http/http.dart';
 
-import 'paypal_order_params.dart';
-
 typedef PayPalAccessTokenProvider = Future<String> Function(PayPalServiceMode);
 
 enum PayPalServiceMode {
@@ -107,7 +105,7 @@ class PayPalService {
   final Client client;
 
   // create a payment request
-  Future<PaymentRequest> createPayment(PayPalOrderParams orderParams) =>
+  Future<PaymentRequest> createPayment(Object orderParams) =>
       accessToken.call(mode).then((accessToken) => client.post(
             Uri.parse("${mode.domain}/v1/payments/payment"),
             body: jsonEncode(orderParams),
