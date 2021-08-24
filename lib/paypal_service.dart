@@ -3,6 +3,7 @@ import 'dart:convert' as convert;
 import 'dart:convert';
 
 import 'package:http/http.dart';
+import 'package:paypal_button/paypal_order_params.dart';
 
 typedef PayPalAccessTokenProvider = Future<String> Function(PayPalServiceMode);
 
@@ -105,7 +106,7 @@ class PayPalService {
   final Client client;
 
   // create a payment request
-  Future<PaymentRequest> createPayment(Object orderParams) =>
+  Future<PaymentRequest> createPayment(PayPalOrderParams orderParams) =>
       accessToken.call(mode).then((accessToken) => client.post(
             Uri.parse("${mode.domain}/v1/payments/payment"),
             body: jsonEncode(orderParams),
