@@ -8,7 +8,7 @@ import 'paypal_service.dart';
 
 class PayPalButton extends StatelessWidget {
   /// The Order to execute
-  final Future<PayPalOrderParams> orderParams;
+  final PayPalOrderParams orderParams;
 
   /// The PayPalService to use
   final PayPalService service;

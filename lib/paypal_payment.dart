@@ -10,7 +10,7 @@ import 'paypal_service.dart';
 
 class PayPalPayment extends StatefulWidget {
   /// The Order to execute
-  final Future<PayPalOrderParams> orderParams;
+  final PayPalOrderParams orderParams;
 
   /// The PayPalService to use
   final PayPalService service;
@@ -47,16 +47,6 @@ class PayPalPayment extends StatefulWidget {
 class PayPalPaymentState extends State<PayPalPayment> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  late PayPalOrderParams _orderParams;
-
-  @override
-  initState() {
-    super.initState();
-    widget.orderParams.then((orderParams) {
-      _orderParams = orderParams;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,7 +59,7 @@ class PayPalPaymentState extends State<PayPalPayment> {
           ),
         ),
         body: FutureBuilder<PaymentRequest>(
-          future: widget.service.createPayment(_orderParams),
+          future: widget.service.createPayment(widget.orderParams),
           builder: (context, state) {
             if (state.hasData) {
               return WebView(
@@ -77,7 +67,7 @@ class PayPalPaymentState extends State<PayPalPayment> {
                   javascriptMode: JavascriptMode.unrestricted,
                   navigationDelegate: (NavigationRequest request) {
                     if (request.url
-                        .contains(_orderParams.redirectUrls.returnUrl)) {
+                        .contains(widget.orderParams.redirectUrls.returnUrl)) {
                       final uri = Uri.parse(request.url);
                       final payerID = uri.queryParameters['PayerID'];
                       if (payerID != null) {
@@ -90,7 +80,7 @@ class PayPalPaymentState extends State<PayPalPayment> {
                             NavigationDecision.navigate;
                       }
                     } else if (request.url
-                        .contains(_orderParams.redirectUrls.cancelUrl)) {
+                        .contains(widget.orderParams.redirectUrls.cancelUrl)) {
                       if (widget.onCancel != null) {
                         return widget.onCancel!(context);
                       }
