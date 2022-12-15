@@ -64,6 +64,11 @@ class PayPalPaymentOptions {
   Map<String, dynamic> toJson() => {
         "allowed_payment_method": allowedPaymentMethod,
       };
+
+  static PayPalPaymentOptions fromJson(Map<String, dynamic> json) =>
+      PayPalPaymentOptions(
+        allowedPaymentMethod: json['allowed_payment_method'],
+      );
 }
 
 class PayPalTransactionAmountDetails {
@@ -82,6 +87,13 @@ class PayPalTransactionAmountDetails {
         "shipping": shipping,
         "shipping_discount": shippingDiscount,
       };
+
+  static PayPalTransactionAmountDetails fromJson(Map<String, dynamic> json) =>
+      PayPalTransactionAmountDetails(
+        subtotal: json['subtotal'],
+        shipping: json['shipping'],
+        shippingDiscount: json['shipping_discount'],
+      );
 }
 
 class PayPalTransactionAmount {
@@ -100,6 +112,12 @@ class PayPalTransactionAmount {
         "currency": currency,
         "details": details,
       };
+
+  static PayPalTransactionAmount fromJson(Map<String, dynamic> json) =>
+      PayPalTransactionAmount(
+          total: json['total'],
+          currency: json['currency'],
+          details: PayPalTransactionAmountDetails.fromJson(json['details']));
 }
 
 class PayPalPayer {
@@ -112,6 +130,9 @@ class PayPalPayer {
   Map<String, dynamic> toJson() => {
         "payment_method": paymentMethod,
       };
+
+  static PayPalPayer fromJson(Map<String, dynamic> json) =>
+      PayPalPayer(paymentMethod: json['payment_method']);
 }
 
 class PayPalShippingAddress {
@@ -145,6 +166,17 @@ class PayPalShippingAddress {
         "phone": phone,
         "state": state,
       };
+
+  static PayPalShippingAddress fromJson(Map<String, dynamic> json) =>
+      PayPalShippingAddress(
+          recipientName: json['recipientName'],
+          line1: json['line1'],
+          line2: json['line2'],
+          city: json['city'],
+          countryCode: json['country_code'],
+          postalCode: json['postal_code'],
+          phone: json['phone'],
+          state: json['state']);
 }
 
 class PayPalItemList {
@@ -160,6 +192,11 @@ class PayPalItemList {
         "items": items,
         if (shippingAddress != null) "shipping_address": shippingAddress,
       };
+
+  static PayPalItemList fromJson(Map<String, dynamic> json) => PayPalItemList(
+    items: (json['items'] as List).map((j) => PayPalItem.fromJson(j)).toList(),
+    shippingAddress: json['shipping_address'] != null ? PayPalShippingAddress.fromJson(json['shipping_address']) : null,
+  );
 }
 
 class PayPalTransaction {
@@ -180,6 +217,12 @@ class PayPalTransaction {
         "payment_options": paymentOptions,
         "item_list": itemList,
       };
+
+  static PayPalTransaction fromJson(Map<String, dynamic> json) => PayPalTransaction(
+      amount: PayPalTransactionAmount.fromJson(json['amount']),
+      description: json['description'],
+      paymentOptions: PayPalPaymentOptions.fromJson(json['payment_options']),
+      itemList: PayPalItemList.fromJson(json['item_list']));
 }
 
 class PayPalRedirectUrls {
@@ -195,6 +238,11 @@ class PayPalRedirectUrls {
         "return_url": returnUrl,
         "cancel_url": cancelUrl,
       };
+
+  static PayPalRedirectUrls fromJson(Map<String, dynamic> json) =>
+      PayPalRedirectUrls(
+          returnUrl: json['return_url'],
+          cancelUrl: json['cancel_url']);
 }
 
 class PayPalOrderParams {
@@ -220,6 +268,16 @@ class PayPalOrderParams {
         "redirect_urls": redirectUrls,
       };
 
+  static PayPalOrderParams fromJson(Map<String, dynamic> json) {
+    return PayPalOrderParams(
+        intent: json['intent'],
+        payer: PayPalPayer.fromJson(json['payer']),
+        transactions: (json['transactions'] as List).map((j) => PayPalTransaction.fromJson(j)).toList(),
+        noteToPayer: json['note_to_payer'],
+        redirectUrls: PayPalRedirectUrls.fromJson(json['redirect_urls']),
+    );
+  }
+
   static PayPalOrderParams create(
     String amount,
     String description,
@@ -240,7 +298,7 @@ class PayPalOrderParams {
         PayPalTransaction(
           amount: PayPalTransactionAmount(
             currency: currency,
-            total: (itemsTotal + shipping).toString(),
+            total: (double.parse(itemsTotal) + shipping.toDouble()).toString(),
             details: PayPalTransactionAmountDetails(
               subtotal: itemsTotal.toString(),
               shippingDiscount: '0',
@@ -267,8 +325,8 @@ class PayPalOrderParams {
 
 class PayPalItem {
   String name;
-  int quantity;
-  double price;
+  double quantity;
+  String price;
   String currency;
 
   PayPalItem({
@@ -286,4 +344,7 @@ class PayPalItem {
       "currency": currency,
     };
   }
+
+  static PayPalItem fromJson(Map<String, dynamic> json) =>
+      PayPalItem(name: json['name'], quantity: json['quantity'], price: json['price'], currency: json['currency']);
 }
